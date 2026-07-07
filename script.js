@@ -5,24 +5,30 @@ function addTask() {
   if (taskText === "") return;
 
   const li = document.createElement("li");
-  li.textContent = taskText;
 
-  // Toggle complete on click
-  li.addEventListener("click", () => {
-    li.classList.toggle("completed");
+  // Checkbox
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.addEventListener("change", () => {
+    li.classList.toggle("completed", checkbox.checked);
   });
+
+  // Task text
+  const span = document.createElement("span");
+  span.textContent = taskText;
 
   // Delete button
   const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "X";
+  deleteBtn.textContent = "Delete";
   deleteBtn.className = "delete-btn";
-  deleteBtn.addEventListener("click", (e) => {
-    e.stopPropagation(); // prevent toggle when clicking delete
+  deleteBtn.addEventListener("click", () => {
     li.remove();
   });
 
+  li.appendChild(checkbox);
+  li.appendChild(span);
   li.appendChild(deleteBtn);
-  document.getElementById("taskList").appendChild(li);
 
+  document.getElementById("taskList").appendChild(li);
   input.value = "";
 }
