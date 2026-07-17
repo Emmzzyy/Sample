@@ -2,18 +2,163 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bugais</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="todo-container">
-    <h1 id="userName">Angel Baby</h1>
-    <div class="input-section">
-      <input type="text" id="taskInput" placeholder="Write a note...">
-      <button onclick="addTask()">Add</button>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-left">
+        <h1><i class="fa-solid fa-square-check brand-icon"></i> Bugais 🫡 </h1>
+        <p>Stay organized, stay motivated, achieve greatness. I know you can all ways do it.</p>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
+    </header>
+
+    <!-- Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-info">
+          <p class="stat-label">Today's Tasks</p>
+          <p class="stat-value" id="todayTasksCount">0/0</p>
+        </div>
+        <i class="fa-regular fa-calendar stat-icon text-blue"></i>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <p class="stat-label">Total Completed</p>
+          <p class="stat-value" id="totalCompletedCount">0</p>
+        </div>
+        <i class="fa-regular fa-circle-check stat-icon text-green"></i>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <p class="stat-label">Current Streak</p>
+          <p class="stat-value" id="streakCount">0 days</p>
+        </div>
+        <i class="fa-solid fa-trophy stat-icon text-yellow"></i>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <p class="stat-label">Success Rate</p>
+          <p class="stat-value" id="successRate">0%</p>
+        </div>
+        <i class="fa-solid fa-chart-line stat-icon text-purple"></i>
+      </div>
+    </section>
+
+    <!-- Motivational Banner -->
+    <div class="motivation-banner">
+      <i class="fa-solid fa-wand-magic-sparkles magic-icon"></i>
+      <p id="motivationQuote">Loading motivation...</p>
     </div>
-    <ul id="taskList"></ul>
+
+    <!-- Main Workspace -->
+    <div class="workspace-grid">
+      
+      <!-- Progress Column -->
+      <div class="panel progress-panel">
+        <h3>Daily Progress</h3>
+        <div class="circle-progress-container">
+          <div class="circle-outer">
+            <div class="circle-inner">
+              <div id="progressPercentage">0%</div>
+            </div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="160px" height="160px">
+            <defs>
+               <linearGradient id="GradientColor">
+                  <stop offset="0%" stop-color="#8a2be2" />
+                  <stop offset="100%" stop-color="#4a00e0" />
+               </linearGradient>
+            </defs>
+            <circle cx="80" cy="80" r="70" stroke-linecap="round" id="progressBarCircle"/>
+          </svg>
+        </div>
+        <div class="progress-details">
+          <p id="progressTaskText">0 of 0 tasks</p>
+          <span id="progressMessage" class="badge">Add some tasks!</span>
+        </div>
+      </div>
+
+      <!-- Calendar Column -->
+      <div class="panel calendar-panel">
+        <div class="calendar-header">
+          <h3 id="calendarMonthYear">Month Year</h3>
+          <div class="calendar-controls">
+            <button onclick="prevMonth()"><i class="fa-solid fa-chevron-left"></i></button>
+            <button onclick="nextMonth()"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="weekdays">
+          <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+        </div>
+        <div class="calendar-days" id="calendarDays"></div>
+        
+        <div class="end-day-section">
+          <button class="end-day-btn" onclick="markDayAsDone()">
+            <i class="fa-solid fa-circle-xmark"></i> End of the Day: Mark Calendar
+          </button>
+        </div>
+      </div>
+
+      <!-- Tasks Column -->
+      <div class="panel tasks-panel">
+        <div class="tasks-header">
+          <div>
+            <h3>Tasks</h3>
+            <p class="subtitle">Today</p>
+          </div>
+          <button class="add-task-trigger" onclick="openModal()"><i class="fa-solid fa-plus"></i> Add Task</button>
+        </div>
+
+        <div class="task-filters">
+          <button class="filter-btn active" onclick="filterTasks('all')">All (<span id="allCount">0</span>)</button>
+          <button class="filter-btn" onclick="filterTasks('pending')">Pending (<span id="pendingCount">0</span>)</button>
+          <button class="filter-btn" onclick="filterTasks('completed')">Completed (<span id="completedCount">0</span>)</button>
+        </div>
+
+        <div class="task-list-wrapper">
+          <ul id="taskList"></ul>
+          <div class="empty-state" id="emptyState">
+            <i class="fa-regular fa-folder-open empty-icon"></i>
+            <p>No tasks for this day yet.</p>
+            <p class="sub">Click "Add Task" to get started!</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
+
+<!-- Add/Edit Task Modal overlay -->
+  <div class="modal-overlay" id="taskModal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Create New Task</h3>
+      <input type="text" id="taskInput" placeholder="What do you want to accomplish today?">
+      <div class="modal-actions">
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        <button class="confirm-btn" id="submitTaskBtn" onclick="handleTaskSubmit()">Add Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task Modal overlay -->
+  <div class="modal-overlay" id="taskModal">
+    <div class="modal-content">
+      <h3>Create New Task</h3>
+      <input type="text" id="taskInput" placeholder="What do you want to accomplish today?">
+      <div class="modal-actions">
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        <button class="confirm-btn" onclick="addTask()">Add Task</button>
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
